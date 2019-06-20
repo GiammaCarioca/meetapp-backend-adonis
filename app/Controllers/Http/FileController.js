@@ -7,14 +7,14 @@ const Helpers = use('Helpers')
  * Resourceful controller for interacting with files
  */
 class FileController {
-  /**
-   * Create/save a new file.
-   * POST files
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
+  async show ({ params, response }) {
+    // pega o id do arquivo com ajuda do params
+    const file = await File.findOrFail(params.id)
+
+    // retorna o file em formato de imagem
+    return response.download(Helpers.tmpPath(`uploads/${file.file}`))
+  }
+
   async store ({ request, response }) {
     try {
       // verifica se na requisição existe um arquivo com name 'file'
