@@ -17,6 +17,17 @@ class User extends Model {
   tokens () {
     return this.hasMany('App/Models/Token')
   }
+
+  preferences () {
+    return this.hasOne('App/Models/Preference')
+  }
+
+  meetups () {
+    // SUBSCRIPTIONS
+    return this.belongsToMany('App/Models/Meetup').pivot(
+      'App/Models/UserMeetup'
+    )
+  }
 }
 
 module.exports = User
