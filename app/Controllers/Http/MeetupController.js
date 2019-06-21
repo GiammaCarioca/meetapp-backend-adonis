@@ -1,9 +1,5 @@
 'use strict'
 
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
-
 /**
  * Resourceful controller for interacting with meetups
  */
@@ -11,82 +7,89 @@ class MeetupController {
   /**
    * Show a list of all meetups.
    * GET meetups
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
-  }
+  async index ({ auth }) {
+    // TODOS OS MEETUPS CRIADOS PELO USER LOGADO
+    const meetups = await auth.user.meetups().fetch()
 
-  /**
-   * Render a form to be used for creating a new meetup.
-   * GET meetups/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
+    return meetups
   }
 
   /**
    * Create/save a new meetup.
    * POST meetups
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store ({ request, auth }) {
+    // INFORMACOES QUE VEM DO FORM
+    const data = request.only([
+      'title',
+      'location',
+      'category',
+      'description',
+      'cover-url'
+    ])
+
+    const meetup = await auth.user.meetups().create({
+      ...data,
+      // USER QUE CRIOU O MEETUP
+      user_id: auth.user.id
+    })
+
+    return meetup
   }
 
   /**
    * Display a single meetup.
    * GET meetups/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
-  }
+  async show ({ params, auth }) {
+    // RETORNA O PRIMEIRO REGISTRO
+    const meetup = await auth.user
+      .meetups()
+      .where('meetups.id', params.id)
+      .first()
 
-  /**
-   * Render a form to update an existing meetup.
-   * GET meetups/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
+    // EAGER LOADING
+    await meetup.load('user')
+
+    return meetup
   }
 
   /**
    * Update meetup details.
    * PUT or PATCH meetups/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update ({ params, request, auth }) {
+    const data = request.only([
+      'title',
+      'location',
+      'category',
+      'description',
+      'cover-url'
+    ])
+    const meetup = await auth.user
+      .meetups()
+      .where('meetups.id', params.id)
+      .first()
+
+    meetup.merge(data)
+
+    await meetup.save()
+
+    return meetup
   }
 
   /**
    * Delete a meetup with id.
    * DELETE meetups/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy ({ params, auth }) {
+    const meetup = await auth.user
+      .meetups()
+      .where('meetups.id', params.id)
+      .first()
+
+    await meetup.delete()
   }
 }
 

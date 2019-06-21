@@ -13,7 +13,7 @@ class MeetupSchema extends Schema {
         .inTable('users')
         .onUpdate('CASCADE')
         .onDelete('SET NULL')
-      // .notNullable()
+        .notNullable()
       table.string('title').notNullable()
       table.string('location').notNullable()
       table.string('category').notNullable()

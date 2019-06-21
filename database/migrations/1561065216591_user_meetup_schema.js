@@ -12,14 +12,14 @@ class UserMeetupSchema extends Schema {
         .references('id')
         .inTable('users')
         .onUpdate('CASCADE')
-      // .onDelete('SET NULL')
+        .onDelete('CASCADE')
       table
         .integer('meetup_id')
         .unsigned()
         .references('id')
         .inTable('meetups')
         .onUpdate('CASCADE')
-      // .onDelete('SET NULL')
+        .onDelete('CASCADE')
       table.timestamps()
     })
   }

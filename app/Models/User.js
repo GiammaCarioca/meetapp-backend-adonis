@@ -24,7 +24,7 @@ class User extends Model {
 
   meetups () {
     // SUBSCRIPTIONS
-    return this.belongsToMany('App/Models/Meetup').pivot(
+    return this.belongsToMany('App/Models/Meetup').pivotModel(
       'App/Models/UserMeetup'
     )
   }

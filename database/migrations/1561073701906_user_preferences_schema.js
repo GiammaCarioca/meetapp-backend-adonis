@@ -13,14 +13,14 @@ class UserPreferencesSchema extends Schema {
         .references('id')
         .inTable('users')
         .onUpdate('CASCADE')
-      // .onDelete('SET NULL')
+        .onDelete('CASCADE')
       table
         .integer('pref_id')
         .unsigned()
         .references('id')
         .inTable('preferences')
         .onUpdate('CASCADE')
-      // .onDelete('SET NULL')
+        .onDelete('CASCADE')
       table.timestamps()
     })
   }
